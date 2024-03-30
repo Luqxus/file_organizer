@@ -1,13 +1,12 @@
 package com.space;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -16,6 +15,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -165,6 +165,28 @@ public class FileOrganizer {
 						entry.getValue().forEach(System.out::println);
 					});
 		}
+	}
+
+	public void deleteDuplicates() {
+		fileHashes.values().forEach(files -> {
+
+			// check if file has duplicates
+			if (files.size() > 1) {
+				Iterator<String> iterator = files.iterator();
+				// Keep the first file, delete the rest
+				iterator.next();
+				while (iterator.hasNext()) {
+					String fileToDelete = iterator.next();
+					try {
+						Files.delete(Paths.get(fileToDelete));
+						System.out.println("Deleted: " + fileToDelete);
+					} catch (IOException e) {
+						System.err.println("Failed to delete: " + fileToDelete);
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	private String toHexString(byte[] bytes) {
