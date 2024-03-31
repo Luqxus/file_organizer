@@ -6,24 +6,30 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         try {
-            FileOrganizer fileOrganizer = new FileOrganizer("Documents/sync");
-
-            fileOrganizer.checkDuplicates();
-
             Scanner scanner = new Scanner(System.in);
 
-            System.out.print("Delete Duplicates ? [y | yes || n| no ] : ");
-            String shouldDeleteDuplicate = scanner.nextLine();
-            // TODO: validate input
+            FileOrganizer fileOrganizer = new FileOrganizer("Documents/sync");
 
-            // close input scanner
-            scanner.close();
+            int duplicateCount = fileOrganizer.checkDuplicates();
 
-            System.out.println(shouldDeleteDuplicate.toUpperCase().equals("Y"));
+            // print duplicate count
+            System.out.printf("\n%d duplicates found.\n", duplicateCount);
 
-            if (shouldDeleteDuplicate.toUpperCase().equals("Y") || shouldDeleteDuplicate.toUpperCase().equals("YES")) {
-                System.out.println("Deleting duplicates");
-                fileOrganizer.deleteDuplicates();
+            if (duplicateCount > 0) {
+                System.out.print("Delete Duplicates ? [y | yes || n| no ] : ");
+                String shouldDeleteDuplicate = scanner.nextLine();
+                // TODO: validate input
+
+                // close input scanner
+                scanner.close();
+
+                System.out.println(shouldDeleteDuplicate.toUpperCase().equals("Y"));
+
+                if (shouldDeleteDuplicate.toUpperCase().equals("Y")
+                        || shouldDeleteDuplicate.toUpperCase().equals("YES")) {
+                    System.out.println("Deleting duplicates");
+                    fileOrganizer.deleteDuplicates();
+                }
             }
 
         } catch (IOException e) {

@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class FileOrganizer {
@@ -133,7 +134,13 @@ public class FileOrganizer {
 		return toHexString(hash);
 	}
 
-	public void checkDuplicates() throws IOException {
+	public int checkDuplicates() throws IOException {
+		// check for duplicate
+
+		// duplicates count
+		AtomicInteger count = new AtomicInteger(0);
+
+		// try walking throught directory
 		try (Stream<Path> paths = Files.walk(this.directory)) {
 			paths.filter(Files::isRegularFile).forEach(path -> {
 				try {
@@ -162,8 +169,14 @@ public class FileOrganizer {
 					.filter(entry -> entry.getValue().size() > 1)
 					.forEach(entry -> {
 						System.out.println("Duplicate files with hash: " + entry.getKey());
-						entry.getValue().forEach(System.out::println);
+						entry.getValue().forEach(k -> {
+							System.out.println(k);
+							count.incrementAndGet();
+						});
 					});
+
+			return count.intValue();
+
 		}
 	}
 
